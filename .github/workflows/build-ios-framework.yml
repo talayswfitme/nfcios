@@ -10,7 +10,7 @@ on:
       - '.github/workflows/build-ios-framework.yml'
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
@@ -26,6 +26,17 @@ jobs:
           file ios/PoscatNfc.framework/PoscatNfc
           plutil -p ios/PoscatNfc.framework/Info.plist
           ls -la ios/PoscatNfc.framework
+      - name: Commit framework to repository
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ios/PoscatNfc.framework
+          if git diff --cached --quiet; then
+            echo "Framework is unchanged"
+          else
+            git commit -m "build: PoscatNfc.framework"
+            git push
+          fi
       - name: Upload framework
         uses: actions/upload-artifact@v4
         with:
