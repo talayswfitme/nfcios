@@ -15,7 +15,7 @@
       ],
       "hooksClass": "",
       "integrateType": "framework",
-      "frameworks": ["PoscatNfc.framework"],
+      "frameworks": ["CoreNFC.framework", "PoscatNfc.framework"],
       "embedFrameworks": ["PoscatNfc.framework"],
       "deploymentTarget": "11.0",
       "validArchitectures": ["arm64"],
