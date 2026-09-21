@@ -1,0 +1,33 @@
+name: Build PoscatNfc framework
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'src/**'
+      - 'ci-stubs/**'
+      - 'build.sh'
+      - '.github/workflows/build-ios-framework.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build framework
+        run: |
+          chmod +x build.sh
+          ./build.sh
+      - name: Verify framework
+        run: |
+          file ios/PoscatNfc.framework/PoscatNfc
+          plutil -p ios/PoscatNfc.framework/Info.plist
+          ls -la ios/PoscatNfc.framework
+      - name: Upload framework
+        uses: actions/upload-artifact@v4
+        with:
+          name: PoscatNfc-framework
+          path: ios/PoscatNfc.framework

@@ -1,0 +1,25 @@
+{
+  "name": "PoscatNfc",
+  "id": "PoscatNfc",
+  "version": "1.0.0",
+  "description": "POSCAT iOS CoreNFC NDEF reader and writer",
+  "_dp_type": "nativeplugin",
+  "_dp_nativeplugin": {
+    "ios": {
+      "plugins": [
+        {
+          "type": "module",
+          "name": "PoscatNfc",
+          "class": "PoscatNfc"
+        }
+      ],
+      "hooksClass": "",
+      "integrateType": "framework",
+      "frameworks": ["PoscatNfc.framework"],
+      "embedFrameworks": ["PoscatNfc.framework"],
+      "deploymentTarget": "11.0",
+      "validArchitectures": ["arm64"],
+      "privacies": ["NSNFCReaderUsageDescription"]
+    }
+  }
+}
