@@ -35,7 +35,7 @@
     [session invalidateSession];
 }
 
-- (void)readerSession:(NFCNDEFReaderSession *)session didDetectTags:(NSArray<__kindof NFCTag *> *)tags API_AVAILABLE(ios(13.0)) {
+- (void)readerSession:(NFCNDEFReaderSession *)session didDetectTags:(NSArray *)tags API_AVAILABLE(ios(13.0)) {
     if (tags.count == 0) return;
     id tag = tags.firstObject;
     if (![tag respondsToSelector:@selector(queryNDEFStatusWithCompletionHandler:)]) {
@@ -47,8 +47,9 @@
             [session invalidateSessionWithErrorMessage:@"该卡不支持 NDEF"];
             return;
         }
+        id<NFCNDEFTag> ndefTag = (id<NFCNDEFTag>)tag;
         if (!self.isWriteMode) {
-            [tag readNDEFWithCompletionHandler:^(NFCNDEFMessage *message, NSError *readError) {
+            [ndefTag readNDEFWithCompletionHandler:^(NFCNDEFMessage *message, NSError *readError) {
                 NFCNDEFPayload *payload = message.records.firstObject;
                 NSString *cardID = [[NSString alloc] initWithData:payload.payload encoding:NSUTF8StringEncoding] ?: @"";
                 if (self.resultCallback) {
@@ -59,9 +60,9 @@
                 [session invalidateSession];
             }];
         } else {
-            NFCNDEFPayload *record = [NFCNDEFPayload wellKnownTypeTextPayloadWithString:self.writePayload locale:@"zh-CN"];
-            NFCNDEFMessage *message = [[NFCNDEFMessage alloc] initWithRecords:@[record]];
-            [tag writeNDEFMessage:message completionHandler:^(NSError *writeError) {
+            NFCNDEFPayload *record = [NFCNDEFPayload wellKnownTypeTextPayloadWithString:self.writePayload locale:[[NSLocale alloc] initWithLocaleIdentifier:@"zh-CN"]];
+            NFCNDEFMessage *message = [[NFCNDEFMessage alloc] initWithNDEFRecords:@[record]];
+            [ndefTag writeNDEF:message completionHandler:^(NSError *writeError) {
                 if (self.resultCallback) {
                     DCUniPluginStatus resultStatus = writeError ? DCUniPluginStatusError : DCUniPluginStatusOk;
                     NSDictionary *data = writeError ? @{} : @{ @"success": @YES, @"cardId": self.writePayload ?: @"" };
